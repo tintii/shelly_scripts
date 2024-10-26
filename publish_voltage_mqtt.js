@@ -1,4 +1,5 @@
 let CONFIG = {
+  periodicUpdates: true, //set if you want to update the topic every <scanInterval> seconds, otherwise this script will run once. Remember further updates will still be published by the device automatically.
   scanInterval: 60, //secs, this will run a timer for every 60 seconds, that will fetch the voltage
   voltmeterID: 100, //the ID of the voltmeter - When we install the add on, the device will define this number
   MQTTPublishTopic: "/status/voltmeter:", //topic to publish the voltage to, set to the default topic. The message is published with retain:1 so that whichever client connects gets the latest value
@@ -48,11 +49,13 @@ function fetchVoltage() {
   }
 }
 
-function init() {
+function setTimer() {
   //start the timer
   Timer.set(CONFIG.scanInterval * 1000, true, fetchVoltage);
 }
 
 getShellyMQTTID();
 fetchVoltage();
-init();
+if (CONFIG.periodicUpdates === true){
+  setTimer();
+}
